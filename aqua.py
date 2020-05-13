@@ -26,6 +26,7 @@ def isNumeric(num):
                 pos += 1
                 continue
             elif ch == "-":
+                pos += 1
                 continue
             elif "0" <= ch <= "9":
                 pos += 1
