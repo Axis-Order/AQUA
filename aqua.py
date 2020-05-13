@@ -13,6 +13,13 @@ class Stack:
     def getLen(self):
         return len(self.stk)
 
+    def isEmpty(self):
+        if len(self.stk) == 0:
+            return True
+        else:
+            return False
+
+
 def isNumeric(num):
     num += "\n"
     pos = 0
@@ -22,7 +29,6 @@ def isNumeric(num):
         ch = num[pos]
         if stat == 0:
             if ch == "+":
-                stat = 1
                 pos += 1
                 continue
             elif ch == "-":
@@ -73,25 +79,27 @@ def repl():
     PAR = 0
     while True:
         print(stack.stk)
-        print(STATUS)
+        print(str(STATUS) + " is now!")
         com = input()
         if com == "quit":
             return
         elif com == "=":
-            if stack.getLen() == 1:
-                p = stack.pop()
-                print(p)
-                stack.push(p)
-            else:
-                b = stack.pop()
-                op = stack.pop()
-                a = stack.pop()
-                if op == "+":
-                    p = a + b
-                elif op == "-":
-                    p = a - b
-                print(p)
-                stack.push(p)
+            while not stack.isEmpty():
+                if stack.getLen() == 1:
+                    p = stack.pop()
+                    print(p)
+                    stack.push(p)
+                    break
+                else:
+                    b = stack.pop()
+                    op = stack.pop()
+                    a = stack.pop()
+                    if op == "+":
+                        p = a + b
+                    elif op == "-":
+                        p = a - b
+                    print(p)
+                    stack.push(p)
             continue
         if STATUS == 0:
             if com == "(":
@@ -111,40 +119,42 @@ def repl():
                 PAR -= 1
                 b = stack.pop()
                 op = stack.pop()
-                if op in "+-":
-                    if op == "+":
-                        p = stack.pop() + b
-                        tmp = stack.pop()
-                        stack.push(p)
-                    else:
-                        p = stack.pop() - b
-                        stack.pop()
-                        stack.push(p)
-                else: # op is LPAR
-                    pass
+                # if op in "+-":
+                #     if op == "+":
+                #         p = stack.pop() + b
+                #         tmp = stack.pop()
+                #         stack.push(p)
+                #         print("P is added:" + str(p))
+                #     else:
+                #         p = stack.pop() - b
+                #         stack.pop()
+                #         stack.push(p)
+                #     op = stack.pop()
+                #     #if op != "(":
+                #      #   stack.push(op)
+                # else: # op is LPAR
+                #     pass
                 if stack.getLen() == 0:
                     stack.push(b)
                     STATUS = 1
                     continue
-                if com in "*/-+":
+                if op in "*/-+":
+                    print(a)
                     a = stack.pop()
-                    if com == "+":
-                        p = a + stack.pop()
-                    if com == "-":
-                        p = a - stack.pop()
-                    if com == "*":
-                        p = a * stack.pop()
-                    if com == "/":
-                        p = a / stack.pop()
+                    if op == "+":
+                        p = a + b
+                    if op == "-":
+                        p = a - b
+                    if op == "*":
+                        p = a * b
+                    if op == "/":
+                        p = a / b
                     STATUS = 1
-                    #stack.push(p)
+                    stack.pop()#LPAR skip
+                    stack.push(p)
                     continue
-            #elif com in "+-*/":
-                #stack.push(com)
-                #stack.push(b)
-                #STATUS = 2
-                #continue
             elif com not in "+-*/":
+                print(com)
                 print("not operator")
                 continue
             elif com == "*":
@@ -155,6 +165,10 @@ def repl():
                 STATUS = 2
                 stack.push(com)
                 continue
+            # elif com == "+" or com == "-":
+            #     STATUS = 2
+            #     stack.push(com)
+            #     continue
             else:
                 if stack.getLen() >= 3:
                     rop = stack.pop()
@@ -165,8 +179,9 @@ def repl():
                             p = lop + rop
                         else:
                             p = lop - rop
-                        stack.push(lop)
-                        stack.push(com)
+                        #stack.push(lop)
+                        stack.push(p)
+
                     else:
                         stack.push(op1)
                         stack.push(rop)
@@ -174,7 +189,10 @@ def repl():
 
             if com != ")":
                 stack.push(com)
-            STATUS = 2
+                print("change two")
+                STATUS = 2
+            else:
+                STATUS = 1
             continue
         if STATUS == 2:
             if com == "(":
@@ -198,8 +216,14 @@ def repl():
                     stack.push(b)
                 STATUS = 1
                 continue
-            else:
-                print("parse error")
+            elif com in "+-":
+                print("syntax error")
+                if op in "+-":
+                    if op == "+":
+                        p = a + b
+                    elif op == "-":
+                        p = a - b
+                    stack.push(p)
                 STATUS = 2
                 continue
 
