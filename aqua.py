@@ -200,7 +200,6 @@ def repl():
                 stack.push(com)
                 STATUS = 0
                 continue
-                #aaa
             if isNumeric(com):
                 b = float(com)
                 op = stack.pop()
